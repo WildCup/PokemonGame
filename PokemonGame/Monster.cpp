@@ -52,6 +52,7 @@ bool Monster::evolve(int& exp) {
 		str += lvl*2;
 		dex = min (9, dex + lvl*2);
 		hp += lvl*2;
+		this->exp += lvl*3;
 
 		std::cout << name << " evolved. All stats increased by " << lvl * 2 << "\n";
 		return true;
@@ -74,27 +75,27 @@ bool Monster::attack(Monster& monster, int& exp) {
 	int dmg = str;
 	switch (type) {
 	case Type::Water:
-		if (monster.type == Type::Water) dmg = min(0, dmg-1);
+		if (monster.type == Type::Water) dmg = max(0, dmg-1);
 		else if (monster.type == Type::Earth || monster.type == Type::Fire) dmg += 1;
 		break;
 	case Type::Earth:
-		if (monster.type == Type::Air) dmg = min(0, dmg - 1);
+		if (monster.type == Type::Air) dmg = max(0, dmg - 1);
 		else if (monster.type == Type::Fire || monster.type == Type::Ice || monster.type == Type::Steel) dmg += 1;
 		break;
 	case Type::Air:
-		if (monster.type == Type::Earth || monster.type == Type::Steel) dmg = min(0, dmg - 1);
+		if (monster.type == Type::Earth || monster.type == Type::Steel) dmg = max(0, dmg - 1);
 		else if (monster.type == Type::Ice) dmg += 1;
 		break;
 	case Type::Fire:
-		if (monster.type == Type::Water || monster.type == Type::Earth) dmg = min(0, dmg - 1);
+		if (monster.type == Type::Water || monster.type == Type::Earth) dmg = max(0, dmg - 1);
 		else if (monster.type == Type::Ice || monster.type == Type::Steel) dmg += 1;
 		break;
 	case Type::Ice:
-		if (monster.type == Type::Water || monster.type == Type::Fire || monster.type == Type::Ice) dmg = min(0, dmg - 1);
+		if (monster.type == Type::Water || monster.type == Type::Fire || monster.type == Type::Ice) dmg = max(0, dmg - 1);
 		else if (monster.type == Type::Earth) dmg += 1;
 		break;
 	case Type::Steel:
-		if (monster.type == Type::Fire || monster.type == Type::Steel) dmg = min(0, dmg - 1);
+		if (monster.type == Type::Fire || monster.type == Type::Steel) dmg = max(0, dmg - 1);
 		else if (monster.type == Type::Water || monster.type == Type::Air) dmg += 1;
 		break;
 	}
@@ -188,7 +189,7 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 				arr[i]->dex = 1;
 				arr[i]->hp = 1;
 				arr[i]->exp = 2;
-				cout << "revived " << name << "\n";
+				cout << "Summoned " << arr[i]->name << "from the grave\n";
 				revived = true;
 				break;
 			}
@@ -210,7 +211,7 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 	else if (power.name == "Berserker") {
 		cout << name << " doubled its stats\n";
 		str *= 2;
-		dex *= 2;
+		dex = min(9, dex*2);
 		hp *= 2;
 	}
 	else if (power.name == "Iluzion") {
@@ -223,10 +224,11 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 		}
 	}
 
-	power.use--;
+	power.use = max(-1,power.use - 1);
 	return true;
 }
 
+#pragma region GettersSetters
 std::string Monster::getName() { return name; }
 std::string Monster::checkName() { 
 	switch (nameType) {
@@ -261,6 +263,7 @@ void Monster::set(int str, int dex, int hp, int exp, int lvl) {
 	this->exp = exp;
 	this->lvl = lvl;
 }
+#pragma endregion
 
 std::ostream& operator<<(std::ostream& std, const Monster& m) {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -77,7 +77,7 @@ void printInstruction() {
 	cout << string(50, '-') << "\n\n";
 }
 
-//take input int[0,max] or -h in a save way. Return false if input is incorrect
+//take input in a save way (int[0,max] or -h). Return false if input is incorrect
 bool saveInput(int &i, int max) {
 	using namespace std;
 	string typed;

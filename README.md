@@ -1,7 +1,7 @@
 # PokemonGame
  
 Turn-based game in the console. (Sth similar to Pokemon game)
-Player chooses his team out of 15 monsters and fight with computer's team.
+Player chooses their team out of 15 monsters and fight with computer's team.
 Game has 4-6 round each with 4-6 enemy's monster to defeat.
 
 Each moster has special ability like shild, poison, revive, summon etc.

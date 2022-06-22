@@ -11,16 +11,16 @@ Monster::Monster(Name name, int str, int dex, int hp, int exp, Monster::Type typ
 	this->dex = dex;
 	this->hp = hp;
 	this->exp = exp;
-	if(type == Monster::Type::Random) this->type = static_cast<Monster::Type>(rand()%6);
+	if (type == Monster::Type::Random) this->type = static_cast<Monster::Type>(rand() % 6);
 	else this->type = type;
 	this->power = power;
 }
 
-bool Monster::takeDamage(int dmg, bool canDodge, int &exp) {
+bool Monster::takeDamage(int dmg, bool canDodge, int& exp) {
 	canMove = true;
 	if (rand() % 11 > dex || !canDodge)
 	{
-		hp = max(0, hp-dmg);
+		hp = max(0, hp - dmg);
 		if (hp <= 0) {
 			exp += this->exp;
 			die();
@@ -41,23 +41,23 @@ void Monster::die() {
 		power.use--;
 	}
 }
-void Monster::sufferDmg(int &exp) {
-	if(suffer > 0 && hp > 0) takeDamage(suffer, 0, exp);
+void Monster::sufferDmg(int& exp) {
+	if (suffer > 0 && hp > 0) takeDamage(suffer, 0, exp);
 }
 bool Monster::evolve(int& exp) {
 	if (exp >= lvl * 10) {
 		exp -= lvl * 10;
 		lvl++;
 
-		str += lvl*2;
-		dex = min (9, dex + lvl*2);
-		hp += lvl*2;
-		this->exp += lvl*3;
+		str += lvl * 2;
+		dex = min(9, dex + lvl * 2);
+		hp += lvl * 2;
+		this->exp += lvl * 3;
 
 		std::cout << name << " evolved. All stats increased by " << lvl * 2 << "\n";
 		return true;
 	}
-	std::cout << "Too little exp to evolve. Exp needed: " << lvl*10 << "\n";
+	std::cout << "Too little exp to evolve. Exp needed: " << lvl * 10 << "\n";
 	return false;
 }
 bool Monster::attack(Monster& monster, int& exp) {
@@ -75,7 +75,7 @@ bool Monster::attack(Monster& monster, int& exp) {
 	int dmg = str;
 	switch (type) {
 	case Type::Water:
-		if (monster.type == Type::Water) dmg = max(0, dmg-1);
+		if (monster.type == Type::Water) dmg = max(0, dmg - 1);
 		else if (monster.type == Type::Earth || monster.type == Type::Fire) dmg += 1;
 		break;
 	case Type::Earth:
@@ -106,7 +106,7 @@ bool Monster::attack(Monster& monster, int& exp) {
 	}
 	return true;
 }
-bool Monster::special(Monster** arr, const size_t size, int &exp) {
+bool Monster::special(Monster** arr, const size_t size, int& exp) {
 	using namespace std;
 	if (power.passive) {
 		cout << "This monster has PASSIVE ability. Choose again\n";
@@ -117,16 +117,16 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 		return false;
 	}
 
-	if(power.name == "Eat") {
+	if (power.name == "Eat") {
 		int i = str;
 		switch (rand() % 3) {
-		case 0: str += str; 
+		case 0: str += str;
 			std::cout << "str";
 			break;
-		case 1: dex += str; 
+		case 1: dex += str;
 			std::cout << "dex";
 			break;
-		case 2: hp += str; 
+		case 2: hp += str;
 			std::cout << "hp";
 			break;
 		}
@@ -141,7 +141,7 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 		}
 	}
 	else if (power.name == "Heal") {
-		for (size_t i = 0; i < size; i++){
+		for (size_t i = 0; i < size; i++) {
 			if (arr[i]->hp > 0) {
 				arr[i]->hp += str;
 				cout << arr[i]->name << " hp increased by " << str << "\n";
@@ -151,7 +151,7 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 	else if (power.name == "Fear") {
 		for (size_t i = 0; i < size; i++) {
 			if (arr[i]->power.name != "Detect (Passive)" && arr[i]->hp > 0) {
-				arr[i]->str = max(1, arr[i]->str-1);
+				arr[i]->str = max(1, arr[i]->str - 1);
 				cout << arr[i]->name << " is afraid\n";
 			}
 		}
@@ -174,7 +174,7 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 	}
 	else if (power.name == "Laser") {
 		int i = rand() % size;
-		if(arr[i]->hp <=0) cout << "Laser hit dead enemy. Nothing happens\n";
+		if (arr[i]->hp <= 0) cout << "Laser hit dead enemy. Nothing happens\n";
 		else if (arr[i]->power.name == "Detect (Passive)") std::cout << "Beast dodged special ability";
 		else {
 			cout << "Laser hit " << arr[i]->name << "\n";
@@ -211,7 +211,7 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 	else if (power.name == "Berserker") {
 		cout << name << " doubled its stats\n";
 		str *= 2;
-		dex = min(9, dex*2);
+		dex = min(9, dex * 2);
 		hp *= 2;
 	}
 	else if (power.name == "Iluzion") {
@@ -224,13 +224,13 @@ bool Monster::special(Monster** arr, const size_t size, int &exp) {
 		}
 	}
 
-	power.use = max(-1,power.use - 1);
+	power.use = max(-1, power.use - 1);
 	return true;
 }
 
 #pragma region GettersSetters
 std::string Monster::getName() { return name; }
-std::string Monster::checkName() { 
+std::string Monster::checkName() {
 	switch (nameType) {
 	case Name::Slime: return "Slime";
 	case Name::Glue: return "Glue";
@@ -254,8 +254,8 @@ int Monster::getLvl() { return lvl; }
 Monster::SpecialPower Monster::getPower() { return power; }
 bool Monster::isOffensive() { return power.offensive; }
 bool Monster::isPassive() { return power.passive; }
-bool Monster::isDead() { return hp<=0; }
-bool Monster::canUsePower() { return !isDead() && power.use>0 && power.offensive; }
+bool Monster::isDead() { return hp <= 0; }
+bool Monster::canUsePower() { return !isDead() && power.use > 0 && power.offensive; }
 void Monster::set(int str, int dex, int hp, int exp, int lvl) {
 	this->str = str;
 	this->dex = dex;

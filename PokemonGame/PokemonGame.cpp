@@ -54,7 +54,7 @@ void printInstruction() {
 	cout << "Monster_name";
 	SetConsoleTextAttribute(hConsole, Color::white);
 	cout << " = the creature can't attack\n";
-	
+
 	cout << string(40, '-') << "\n" <<
 		"Game has n rounds (n depends on difficulty). Each cycle in a round looks as follows:\n" <<
 		"1. You choose which of your monsters you want to select\n" <<
@@ -71,14 +71,20 @@ void printInstruction() {
 	SetConsoleTextAttribute(hConsole, Color::green);
 	cout << string(20, '-') << "Special Powers" << string(20, '-') << "\n";
 	SetConsoleTextAttribute(hConsole, Color::white);
-	for (size_t i = 0; i < 15; i++){
+	for (size_t i = 0; i < 15; i++) {
 		cout << "-" << monsters[i].getPower() << "\n";
 	}
 	cout << string(50, '-') << "\n\n";
 }
 
 //take input in a save way (int[0,max] or -h). Return false if input is incorrect
-bool saveInput(int &i, int max) {
+/*
+* @param i - variable that should become an input
+* @param max - maximal input that can be accepted
+* @param exp - that should be incresed if killed
+* @return false if input is incorrect
+*/
+bool saveInput(int& i, int max) {
 	using namespace std;
 	string typed;
 
@@ -112,9 +118,9 @@ Monster** chooseMonsters() {
 	cout << "Choose 6 monsters: ";
 	for (int i = 0; i < 6;) {
 		if (saveInput(a[i], 14)) ++i;
-		else cout << "Choose " << 6-i << " monsters: ";
+		else cout << "Choose " << 6 - i << " monsters: ";
 	}
-	
+
 	/*cout << "Your monsters: ";
 	for (int i = 0; i < 5; ++i)
 		cout << monsters[a[i]].getName() << ", ";
@@ -132,10 +138,10 @@ Monster** chooseMonsters() {
 }
 
 //return randomly chosen team of monsters
-Monster** chooseEnemy(size_t size){
+Monster** chooseEnemy(size_t size) {
 	static Monster* enemy[6];
 	for (int i = 0; i < size; ++i)
-		enemy[i] = new Monster(monsters[rand()%15]);
+		enemy[i] = new Monster(monsters[rand() % 15]);
 	return enemy;
 }
 
@@ -145,7 +151,7 @@ void print(Monster** arr, size_t size, bool player) {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, Color::purple);
 	if (player)		cout << string(20, '-') << "Player's team" << string(20, '-') << "\n";
-	else			cout << string(20, '-') <<  "Enemy's  team" << string(20, '-') << "\n";
+	else			cout << string(20, '-') << "Enemy's  team" << string(20, '-') << "\n";
 	SetConsoleTextAttribute(hConsole, Color::white);
 	for (size_t i = 0; i < size; i++)
 		cout << i << ". " << **(arr + i);
@@ -153,7 +159,12 @@ void print(Monster** arr, size_t size, bool player) {
 }
 
 //find random alive enemy
-int findAlive(Monster** arr, size_t size) { 
+/*
+* @param arr - array of enemy's monster
+* @param size - size of that array
+* @return int of a random alive enemy. -1 if not found
+*/
+int findAlive(Monster** arr, size_t size) {
 	int aliveI = -1;
 	for (int i = 0; i < size; i++) {
 		if (!(arr[i]->isDead())) {
@@ -166,6 +177,13 @@ int findAlive(Monster** arr, size_t size) {
 }
 
 //saving progress
+/*
+* @param arr - array of player's monster
+* @param round - which round should be played next
+* @param difficulty - which difficulty is set
+* @param exp - how much exp player has
+* @return void
+*/
 void save(Monster** arr, int round, int difficulty, int exp) {
 	std::ofstream myFile;
 	myFile.open("progress.txt");
@@ -178,6 +196,13 @@ void save(Monster** arr, int round, int difficulty, int exp) {
 }
 
 //loading the progress
+/*
+* @param succes - is loading succed
+* @param round - round to be set
+* @param difficulty - difficulty to be set
+* @param exp - how much exp player should has
+* @return arr of player's monster from the file
+*/
 Monster** load(bool& succes, int& round, int& difficulty, int& exp) {
 	static Monster* player[6];
 	succes = true;
@@ -204,7 +229,7 @@ Monster** load(bool& succes, int& round, int& difficulty, int& exp) {
 		difficulty = numbers[1];
 		exp = numbers[2];
 
-		for (size_t j = 0, i=3; j < 6; j++, i+= 6) {
+		for (size_t j = 0, i = 3; j < 6; j++, i += 6) {
 			player[j] = new Monster(monsters[numbers[i]]);
 			player[j]->set(numbers[i + 1], numbers[i + 2], numbers[i + 3], numbers[i + 4], numbers[i + 5]);
 		}
@@ -272,7 +297,7 @@ int main()
 	print(player, 6, 1);
 	print(enemy, difficulty, 0);
 
-	#pragma endregion
+#pragma endregion
 
 	while (true) {
 		#pragma region PlayerTurn
@@ -292,21 +317,21 @@ int main()
 		cout << "1. Attack" << "\n";
 		cout << "2. Use special ability: " << player[i]->getPower() << "\n";
 		cout << "What to do: ";
-		
+
 		int option;
 		if (!saveInput(option, 2)) continue;
 		cout << "\n";
 
 		switch (option) {
 		case 0: if (!player[i]->evolve(exp)) continue; break;
-		case 1: 
+		case 1:
 			cout << "Choose which monster to attact: ";
-			if (!saveInput(option,difficulty-1)) continue;
+			if (!saveInput(option, difficulty - 1)) continue;
 
 			if (!player[i]->attack(*enemy[option], exp)) continue;
 			break;
-		case 2: 
-			Monster** arr;
+		case 2:
+			Monster * *arr;
 			size_t size;
 			if (player[i]->isOffensive()) {
 				arr = enemy;
@@ -316,17 +341,17 @@ int main()
 				arr = player;
 				size = 6;
 			}
-			if (!player[i]->special(arr,size,exp)) {
+			if (!player[i]->special(arr, size, exp)) {
 				continue;
 			}
 			break;
-		default: 
+		default:
 			cout << "wrong number. Choose again\n";
 			continue;
 		}
-		
+
 		dead = 0;
-		for (size_t i = 0; i < difficulty; i++){
+		for (size_t i = 0; i < difficulty; i++) {
 			enemy[i]->sufferDmg(exp);
 			if (enemy[i]->isDead() || !(enemy[i]->canMove)) dead++;
 		}
@@ -341,7 +366,7 @@ int main()
 				cout << "Choose:\n" <<
 					"0. Continue playing\n" <<
 					"1. Save and exit\n" << "Option: ";
-				while (!saveInput(i,1)) { cout << "Wrong number. Type 0 or 1\n"; }
+				while (!saveInput(i, 1)) { cout << "Wrong number. Type 0 or 1\n"; }
 				if (i == 0) {
 					for (size_t i = 0; i < difficulty; i++)
 						delete enemy[i];
@@ -354,7 +379,7 @@ int main()
 					continue;
 				}
 				else {
-					save(player,round,difficulty,exp);
+					save(player, round, difficulty, exp);
 					for (size_t i = 0; i < difficulty; i++)
 						delete enemy[i];
 					for (size_t i = 0; i < 6; i++)
@@ -369,24 +394,24 @@ int main()
 				SetConsoleTextAttribute(hConsole, Color::white);
 				cout << "\nPRESS ENY KEY TO EXIT THE GAME\n\n";
 			}
-			break; 
+			break;
 		}
 
-		#pragma endregion
+#pragma endregion
 
 		#pragma region EnemyTurn
 		SetConsoleTextAttribute(hConsole, Color::purple);
-		cout << "\n" << string(20, '-') << "Enemy's turn" << string(20, '-') <<"\n";
+		cout << "\n" << string(20, '-') << "Enemy's turn" << string(20, '-') << "\n";
 		SetConsoleTextAttribute(hConsole, Color::white);
 		bool evolved = false;
-		for (size_t i = 0; i < difficulty; i++){
+		for (size_t i = 0; i < difficulty; i++) {
 			if (enemyExp >= enemy[i]->getLvl() * 10 && !(enemy[i]->isDead())) {
-				enemy[i]->evolve(enemyExp); 
+				enemy[i]->evolve(enemyExp);
 				evolved = true;
 				break;
 			}
 		}
-		if(!evolved){
+		if (!evolved) {
 			int aliveI = findAlive(enemy, difficulty);
 			int aliveIPlayer = findAlive(player, 6);
 			if (aliveIPlayer == -1) {
@@ -398,19 +423,19 @@ int main()
 			for (int i = 0; i < difficulty; i++) {
 				if (enemy[i]->canUsePower()) {
 					specialI = i;
-					if(rand()%2==1)
+					if (rand() % 2 == 1)
 						break;
 				}
 			}
 
 			if (rand() % 2 == 0 && specialI != -1) {
 				cout << enemy[specialI]->getName() << " uses special ability\n";
-				if(enemy[specialI]->isOffensive())
+				if (enemy[specialI]->isOffensive())
 					enemy[specialI]->special(player, 6, enemyExp);
 				else enemy[specialI]->special(enemy, difficulty, enemyExp);
 			}
 			else {
-				cout << enemy[aliveI]->getName() << " attacks "<< player[aliveIPlayer]->getName() << "\n";
+				cout << enemy[aliveI]->getName() << " attacks " << player[aliveIPlayer]->getName() << "\n";
 				if (!enemy[aliveI]->canMove) cout << "This monster can't move. Enemy lost turn\n";
 				else enemy[aliveI]->attack(*player[aliveIPlayer], enemyExp);
 			}
@@ -428,16 +453,16 @@ int main()
 
 			SetConsoleTextAttribute(hConsole, Color::white);
 			cout << "\nPRESS ENY KEY TO EXIT THE GAME\n\n";
-			
+
 			break;
 		}
-		#pragma endregion
+#pragma endregion
 
 		cout << "\n";
 
 
-		print(player, 6 ,1);
-		print(enemy, difficulty ,0);
+		print(player, 6, 1);
+		print(enemy, difficulty, 0);
 		cout << "\n";
 	}
 }

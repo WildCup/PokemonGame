@@ -14,7 +14,7 @@ class Monster
 	};
 public:
 	enum class Type { Water, Earth, Air, Fire, Ice, Steel, Random };
-	enum class Name { Slime,Glue,Spider,Tree,Ghost,Mist,Vector,Fenix,Eye,Witch,Cube,Knight,Vampire,Beast,Mirror};
+	enum class Name { Slime, Glue, Spider, Tree, Ghost, Mist, Vector, Fenix, Eye, Witch, Cube, Knight, Vampire, Beast, Mirror };
 	friend std::ostream& operator<<(std::ostream& std, const SpecialPower&);
 
 private:
@@ -33,13 +33,34 @@ public:
 	//constructor
 	Monster(Name name, int str, int dex, int hp, int exp, Monster::Type type, SpecialPower power);
 
-	bool takeDamage(int dmg, bool canDodge, int& exp);	//returns true if took dmg. Increses attackers exp if died
-	void die();											//check if can revive
-	bool evolve(int& exp);								//return true if succed (and decrease given exp)
-	bool attack(Monster& monster, int& exp);			//return true if succesfully attacked. Check for passive abilities
-	bool special(Monster** arr, const size_t size, int& exp); //use special ability. Arr is arr of allies or enemies depending if power is offencive or defensive
+	/*
+	* @param dmg that it was attacked with
+	* @param canDodge - is is possible to dodge
+	* @param exp - that should be incresed if killed
+	* @return true if took dmg
+	*/
+	bool takeDamage(int dmg, bool canDodge, int& exp);
+	void die(); //check if can revive
+	/*
+	* @param exp - that should be decresed after evolving
+	* @return true if succed evoluetion
+	*/
+	bool evolve(int& exp);
+	/*
+	* @param monster - shich should be attacked
+	* @param exp - that should be incresed if killed
+	* @return  true if succesfully attacked
+	*/
+	bool attack(Monster& monster, int& exp);			//Check for passive abilities
+	/*
+	* @param arr - array of allies or enemies depending if power is offencive or defensive
+	* @param size - size of that array
+	* @param exp - that should be incresed if killed
+	* @return true if succesfully used ability
+	*/
+	bool special(Monster** arr, const size_t size, int& exp);
 
-	std::string getName();   
+	std::string getName();
 	std::string checkName(); //convert enum to string. Returns name
 	int getLvl();
 	SpecialPower getPower();
@@ -49,7 +70,7 @@ public:
 	bool canUsePower();
 	bool isDead();
 	bool canMove = true;
-	
+
 	friend std::ostream& operator<<(std::ostream& std, const Monster&);
 	std::string toString();  //return a string that can be saved to file
 

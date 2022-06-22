@@ -13,8 +13,8 @@ Table strong-weak effectiveness egains each other can be found in listed below p
 Enemy's behavior is random but enemy won't try attacking moster which is already dead etc.
 Better combat AI may be provided soon if I have time (like attacing most dangerous monsters first or trying to finish off low-hp ones).
 
-I have to say some monsters (especially their abilities) are stronger then others but still game ballanse is good enough to be fun to play.
-And even if you choose the strongers monster, winning whole game on hard is difficult since you don't heal every round.
+I have to say some monsters (especially their abilities) are stronger then others, but still game ballanse is good enough to be fun to play.
+And even if you choose the strongest monster, winning whole game on hard is difficult since you don't heal every round.
 
 
 Saving and loading is supported.
